@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     public int hearts = 3;
 
+    public GameObject[] bricks;
+
     private void Awake()
     {
         // Configuración del Singleton
@@ -27,6 +29,7 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(1);
             Debug.Log("GameOver");
+            hearts = 3; // Reiniciar corazones para la próxima partida
         }
         else
         {
@@ -40,5 +43,14 @@ public class GameManager : MonoBehaviour
         // Ahora llamamos directamente a los Singletons de Player y Ball
         Player.Instance.ResetPlayer();
         Ball.Instance.ResetBall();
+    }
+    public void winscreen() 
+    {
+        if (bricks.Length == (0))
+        {
+            SceneManager.LoadScene(2);
+            Debug.Log("You Win!");
+        }
+       
     }
 }
