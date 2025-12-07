@@ -30,9 +30,18 @@ public class Ball : MonoBehaviour
 
     public void ResetBall()
     {
-        
-        velocity.x = Random.Range(-1f, 1f);
-        velocity.y = 1f;
-        rb2D.AddForce(velocity * speed);
+        // Reposicionar en el punto inicial
+        transform.position = startPosition;
+
+        // Dormir y despertar el rigidbody para limpiar fuerzas acumuladas
+        rb2D.Sleep();
+        rb2D.WakeUp();
+
+        // Dirección aleatoria hacia arriba
+        Vector2 dir = new Vector2(Random.Range(-1f, 1f), 1f).normalized;
+
+        // Impulso moderado
+        rb2D.AddForce(dir * 8f, ForceMode2D.Impulse);
     }
+
 }
