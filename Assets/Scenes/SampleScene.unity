@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 108168350}
   m_Layer: 0
   m_Name: Ball
-  m_TagString: Untagged
+  m_TagString: Ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2919,18 +2919,6 @@ PrefabInstance:
     - target: {fileID: 1851033156850799861, guid: 61d5a79bd290d1544ad9418a0f9ff501, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5697195211715484953, guid: 61d5a79bd290d1544ad9418a0f9ff501, type: 3}
-      propertyPath: m_Color.b
-      value: 0.6392157
-      objectReference: {fileID: 0}
-    - target: {fileID: 5697195211715484953, guid: 61d5a79bd290d1544ad9418a0f9ff501, type: 3}
-      propertyPath: m_Color.g
-      value: 0.047058824
-      objectReference: {fileID: 0}
-    - target: {fileID: 5697195211715484953, guid: 61d5a79bd290d1544ad9418a0f9ff501, type: 3}
-      propertyPath: m_Color.r
-      value: 0.22745098
       objectReference: {fileID: 0}
     - target: {fileID: 7250728620098769437, guid: 61d5a79bd290d1544ad9418a0f9ff501, type: 3}
       propertyPath: m_Name

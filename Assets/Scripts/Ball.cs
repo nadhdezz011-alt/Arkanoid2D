@@ -13,9 +13,11 @@ public class Ball : MonoBehaviour
         rb2D.AddForce(Velocity * speed);
     }
 
-    
-    void Update()
-    {
-        
+   private void OnCollisionEnter2D(Collision2D collision)
+   {
+       if (collision.gameObject.CompareTag("Dead"))
+       {
+           FindObjectOfType<GameManager>().LoseHeart();
+        }
     }
 }
