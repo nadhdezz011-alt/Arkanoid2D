@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
 
     public int hearts = 3;
 
-    public GameObject[] bricks;
+    // Contador de ladrillos restantes
+    public int brickCount;
 
     private void Awake()
     {
@@ -40,17 +41,24 @@ public class GameManager : MonoBehaviour
 
     public void ResetLevel1()
     {
-        // Ahora llamamos directamente a los Singletons de Player y Ball
         Player.Instance.ResetPlayer();
         Ball.Instance.ResetBall();
     }
-    public void winscreen() 
+
+    // Llamado por cada ladrillo al instanciarse
+    public void RegisterBrick()
     {
-        if (bricks.Length == (0))
+        brickCount++;
+    }
+
+    // Llamado por cada ladrillo al destruirse
+    public void BrickDestroyed()
+    {
+        brickCount--;
+        if (brickCount <= 0)
         {
             SceneManager.LoadScene(2);
             Debug.Log("You Win!");
         }
-       
     }
 }
