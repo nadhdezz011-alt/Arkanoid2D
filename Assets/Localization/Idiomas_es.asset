@@ -27,7 +27,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 658276761600
-    m_Localized: Juego terminado
+    m_Localized: Game Over
     m_Metadata:
       m_Items: []
   references:
