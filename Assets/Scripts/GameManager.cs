@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [Header("Arrays de bloques")]
     public GameObject[] rewardBricks;
     public GameObject[] badBricks;
-    public GameObject[] powerUpBricks;
+    public GameObject[] powerUpBricks; // volvemos a usarlo
 
     [Header("Posiciones posibles")]
     public Transform[] spawnPositions;
@@ -60,9 +60,9 @@ public class GameManager : MonoBehaviour
             badBrickTimer = 0f;
         }
 
-        // Aparición aleatoria de bricks de power-up
+        // Aparición aleatoria de bricks de power-up (solo bloques, no corazones)
         powerUpBrickTimer += Time.deltaTime;
-        if (powerUpBrickTimer >= Random.Range(5f, 10f))
+        if (powerUpBrickTimer >= Random.Range(8f, 15f)) // un poco más espaciado
         {
             SpawnPowerUpBrick();
             powerUpBrickTimer = 0f;
@@ -94,6 +94,12 @@ public class GameManager : MonoBehaviour
         {
             ResetLevel1();
         }
+    }
+
+    public void GainHeart()
+    {
+        hearts++;
+        heartsText.text = hearts.ToString();
     }
 
     public void ResetLevel1()

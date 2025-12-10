@@ -3,31 +3,40 @@ using UnityEngine;
 public class PowerUpBrick : MonoBehaviour
 {
     public GameObject powerUpPrefab;
-    public float lifeTime = 5f;
+    public float spawnDelay = 2f; // segundos de retraso
 
-    private void OnEnable()
+    private bool pendingSpawn = false;
+    private float timer = 0f;
+
+    private void Update()
     {
-        Invoke(nameof(Deactivate), lifeTime);
+        if (pendingSpawn)
+        {
+            timer += Time.deltaTime;
+            if (timer >= spawnDelay)
+            {
+                if (powerUpPrefab != null)
+                {
+                    Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
+                }
+
+                // Ahora sí desactivamos el bloque
+                gameObject.SetActive(false);
+
+                pendingSpawn = false;
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            if (powerUpPrefab != null)
-            {
-                Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
-            }
-
             GameManager.Instance.BrickDestroyed(this);
 
-            gameObject.SetActive(false);
+            // activa el temporizador para instanciar después
+            pendingSpawn = true;
+            timer = 0f;
         }
-    }
-
-    private void Deactivate()
-    {
-        if (gameObject.activeSelf)
-            gameObject.SetActive(false);
     }
 }

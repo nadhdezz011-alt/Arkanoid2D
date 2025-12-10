@@ -2,13 +2,28 @@ using UnityEngine;
 
 public class PowerUp : MonoBehaviour
 {
-    public int bonusValue = 200;   // puntos extra al romperlo
-    public float lifeTime = 5f;    // tiempo que permanece activo
+    public int bonusValue = 200;
+    public float fallSpeed = 1f;
+    public float lifeTime = 10f;   // tiempo máximo en pantalla
+
+    private float timer;
 
     private void OnEnable()
     {
-        // Desaparece automáticamente tras X segundos si no lo golpeas
-        Invoke("Deactivate", lifeTime);
+        timer = 0f;
+    }
+
+    private void Update()
+    {
+        // Movimiento hacia abajo
+        transform.Translate(Vector2.down * fallSpeed * Time.deltaTime);
+
+        // Contador de tiempo
+        timer += Time.deltaTime;
+        if (timer >= lifeTime)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -16,14 +31,10 @@ public class PowerUp : MonoBehaviour
         if (collision.gameObject.CompareTag("Ball"))
         {
             GameManager.Instance.AddScore(bonusValue);
+            GameManager.Instance.GainHeart();
             GameManager.Instance.BrickDestroyed(this);
-            Destroy(gameObject);
-        }
-    }
 
-    private void Deactivate()
-    {
-        if (gameObject.activeSelf)
             gameObject.SetActive(false);
+        }
     }
 }
