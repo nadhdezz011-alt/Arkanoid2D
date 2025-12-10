@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [Header("Arrays de bloques")]
     public GameObject[] rewardBricks;
     public GameObject[] badBricks;
-    public GameObject[] powerUpBricks; // volvemos a usarlo
+    public GameObject[] powerUpBricks;
 
     [Header("Posiciones posibles")]
     public Transform[] spawnPositions;
@@ -29,6 +29,11 @@ public class GameManager : MonoBehaviour
     private float badBrickTimer;
     private float powerUpBrickTimer;
 
+    [Header("Control de posiciones")]
+    public float releaseDelay = 2f;
+    private bool[] occupied;
+    private float[] releaseTimers;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -37,11 +42,13 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        occupied = new bool[spawnPositions.Length];
+        releaseTimers = new float[spawnPositions.Length];
     }
 
     private void Update()
     {
-        // Cuenta atrás
         if (remainingTime > 0)
         {
             remainingTime -= Time.deltaTime;
@@ -52,7 +59,6 @@ public class GameManager : MonoBehaviour
             EndGame();
         }
 
-        // Aparición aleatoria de bricks malos
         badBrickTimer += Time.deltaTime;
         if (badBrickTimer >= Random.Range(5f, 10f))
         {
@@ -60,12 +66,28 @@ public class GameManager : MonoBehaviour
             badBrickTimer = 0f;
         }
 
-        // Aparición aleatoria de bricks de power-up (solo bloques, no corazones)
         powerUpBrickTimer += Time.deltaTime;
-        if (powerUpBrickTimer >= Random.Range(8f, 15f)) // un poco más espaciado
+        if (powerUpBrickTimer >= Random.Range(8f, 15f))
         {
             SpawnPowerUpBrick();
             powerUpBrickTimer = 0f;
+        }
+
+        HandleReleaseTimers();
+    }
+
+    private void HandleReleaseTimers()
+    {
+        for (int i = 0; i < releaseTimers.Length; i++)
+        {
+            if (releaseTimers[i] > 0f)
+            {
+                releaseTimers[i] -= Time.deltaTime;
+                if (releaseTimers[i] <= 0f)
+                {
+                    occupied[i] = false;
+                }
+            }
         }
     }
 
@@ -73,12 +95,23 @@ public class GameManager : MonoBehaviour
     {
         score += value;
         scoreText.text = score.ToString();
+        RefreshUI();
+
     }
+
 
     public void BrickDestroyed(MonoBehaviour brick)
     {
-        // Aquí podrías comprobar si quedan bricks activos
+        if (brick == null) return;
+
+        // Solo actuar si el objeto pertenece a un spawn válido
+        int posIndex = FindClosestSpawnIndex(brick.transform.position);
+        if (posIndex < 0 || posIndex >= occupied.Length) return;
+
+        occupied[posIndex] = true;
+        releaseTimers[posIndex] = releaseDelay;
     }
+
 
     public void LoseHeart()
     {
@@ -87,19 +120,21 @@ public class GameManager : MonoBehaviour
 
         if (hearts <= 0)
         {
-            SceneManager.LoadScene(1); // GameOver
+            SceneManager.LoadScene(1);
             hearts = 3;
         }
         else
         {
             ResetLevel1();
         }
+        RefreshUI();
     }
 
     public void GainHeart()
     {
         hearts++;
         heartsText.text = hearts.ToString();
+        RefreshUI();
     }
 
     public void ResetLevel1()
@@ -110,18 +145,28 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-        SceneManager.LoadScene(3); // Escena de resultados
+        PlayerPrefs.SetInt("FinalScore", score);
+        PlayerPrefs.SetInt("FinalHearts", hearts);
+        PlayerPrefs.SetInt("FinalTime", Mathf.CeilToInt(remainingTime));
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene(3); // tu escena de resultados
     }
+
 
     private void SpawnBadBrick()
     {
         if (badBricks.Length == 0 || spawnPositions.Length == 0) return;
 
         int index = Random.Range(0, badBricks.Length);
-        int posIndex = Random.Range(0, spawnPositions.Length);
+        int posIndex = GetFreePositionIndex();
 
-        badBricks[index].transform.position = spawnPositions[posIndex].position;
-        badBricks[index].SetActive(true);
+        if (posIndex != -1)
+        {
+            badBricks[index].transform.position = spawnPositions[posIndex].position;
+            badBricks[index].SetActive(true);
+            occupied[posIndex] = true;
+        }
     }
 
     private void SpawnPowerUpBrick()
@@ -129,9 +174,56 @@ public class GameManager : MonoBehaviour
         if (powerUpBricks.Length == 0 || spawnPositions.Length == 0) return;
 
         int index = Random.Range(0, powerUpBricks.Length);
-        int posIndex = Random.Range(0, spawnPositions.Length);
+        int posIndex = GetFreePositionIndex();
 
-        powerUpBricks[index].transform.position = spawnPositions[posIndex].position;
-        powerUpBricks[index].SetActive(true);
+        if (posIndex != -1)
+        {
+            powerUpBricks[index].transform.position = spawnPositions[posIndex].position;
+            powerUpBricks[index].SetActive(true);
+            occupied[posIndex] = true;
+        }
     }
+
+    private int GetFreePositionIndex()
+    {
+        int[] freeIndices = new int[spawnPositions.Length];
+        int count = 0;
+
+        for (int i = 0; i < spawnPositions.Length; i++)
+        {
+            if (!occupied[i])
+            {
+                freeIndices[count] = i;
+                count++;
+            }
+        }
+
+        if (count == 0) return -1;
+        return freeIndices[Random.Range(0, count)];
+    }
+
+    private int FindClosestSpawnIndex(Vector3 position)
+    {
+        int closestIndex = 0;
+        float minDist = float.MaxValue;
+
+        for (int i = 0; i < spawnPositions.Length; i++)
+        {
+            float dist = Vector3.Distance(position, spawnPositions[i].position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closestIndex = i;
+            }
+        }
+
+        return closestIndex;
+    }
+    private void RefreshUI()
+    {
+        heartsText.text = hearts.ToString();
+        scoreText.text = score.ToString();
+        timerText.text = Mathf.CeilToInt(remainingTime).ToString();
+    }
+
 }

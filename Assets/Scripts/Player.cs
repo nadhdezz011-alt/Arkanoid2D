@@ -6,8 +6,6 @@ public class Player : MonoBehaviour
 
     public Rigidbody2D rb;
     public float moveSpeed = 25f;
-    private float inputValue;
-    private Vector2 moveDirection;
     private Vector2 startPosition;
 
     private void Awake()
@@ -23,23 +21,20 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        inputValue = Input.GetAxis("Horizontal");
-        if (inputValue == 1)
-            moveDirection = Vector2.right;
-        else if (inputValue == -1)
-            moveDirection = Vector2.left;
-        else
-            moveDirection = Vector2.zero;
+        float inputValue = Input.GetAxis("Horizontal");
 
-        rb.AddForce(moveDirection * moveSpeed * Time.deltaTime * 100);
+        // Movimiento con AddForce (fluido)
+        rb.AddForce(Vector2.right * inputValue * moveSpeed);
+
+        // Limitar a los bordes
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, -8f, 8f);
+        transform.position = pos;
     }
 
     public void ResetPlayer()
     {
-        // Reposicionar al jugador
         transform.position = startPosition;
-
-        // Dormir y despertar el rigidbody para limpiar fuerzas
         rb.Sleep();
         rb.WakeUp();
     }

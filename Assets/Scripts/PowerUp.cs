@@ -3,8 +3,8 @@ using UnityEngine;
 public class PowerUp : MonoBehaviour
 {
     public int bonusValue = 200;
-    public float fallSpeed = 1f;
-    public float lifeTime = 10f;   // tiempo máximo en pantalla
+    public float fallSpeed = 0.5f;
+    public float lifeTime = 5f;   // tiempo máximo en pantalla
 
     private float timer;
 
@@ -26,15 +26,16 @@ public class PowerUp : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Ball"))
+        if (collision.CompareTag("Player"))
         {
             GameManager.Instance.AddScore(bonusValue);
             GameManager.Instance.GainHeart();
-            GameManager.Instance.BrickDestroyed(this);
 
+            //  Quitamos BrickDestroyed(this)
             gameObject.SetActive(false);
         }
     }
+
 }

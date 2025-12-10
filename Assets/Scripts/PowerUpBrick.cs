@@ -3,10 +3,11 @@ using UnityEngine;
 public class PowerUpBrick : MonoBehaviour
 {
     public GameObject powerUpPrefab;
-    public float spawnDelay = 2f; // segundos de retraso
+    public float spawnDelay = 2f; // segundos de retraso para el corazón
 
     private bool pendingSpawn = false;
     private float timer = 0f;
+    private Vector3 spawnPosition;
 
     private void Update()
     {
@@ -17,12 +18,13 @@ public class PowerUpBrick : MonoBehaviour
             {
                 if (powerUpPrefab != null)
                 {
-                    Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
+                    Instantiate(powerUpPrefab, spawnPosition, Quaternion.identity);
                 }
 
-                // Ahora sí desactivamos el bloque
-                gameObject.SetActive(false);
+                // Notificamos al GameManager para liberar la posición con delay
+                GameManager.Instance.BrickDestroyed(this);
 
+                gameObject.SetActive(false);
                 pendingSpawn = false;
             }
         }
@@ -32,9 +34,10 @@ public class PowerUpBrick : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            GameManager.Instance.BrickDestroyed(this);
+            // Guardamos la posición antes de desactivar
+            spawnPosition = transform.position;
 
-            // activa el temporizador para instanciar después
+            // Activamos temporizador para instanciar el corazón
             pendingSpawn = true;
             timer = 0f;
         }
