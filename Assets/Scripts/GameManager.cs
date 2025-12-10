@@ -150,8 +150,9 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("FinalTime", Mathf.CeilToInt(remainingTime));
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene(3); // tu escena de resultados
+        SceneManager.LoadScene(3); // índice de tu escena de resultados
     }
+
 
 
     private void SpawnBadBrick()

@@ -30,6 +30,18 @@ MonoBehaviour:
     m_Localized: Game Over
     m_Metadata:
       m_Items: []
+  - m_Id: 793207862083584
+    m_Localized: Puntos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 793305346097152
+    m_Localized: Vidas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 795205059624960
+    m_Localized: Tiempo
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

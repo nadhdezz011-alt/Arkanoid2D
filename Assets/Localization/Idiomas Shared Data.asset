@@ -27,6 +27,18 @@ MonoBehaviour:
     m_Key: _game over
     m_Metadata:
       m_Items: []
+  - m_Id: 793207862083584
+    m_Key: _score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 793305346097152
+    m_Key: _lives
+    m_Metadata:
+      m_Items: []
+  - m_Id: 795205059624960
+    m_Key: _time
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

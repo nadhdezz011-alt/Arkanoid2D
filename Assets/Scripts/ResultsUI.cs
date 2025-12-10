@@ -19,15 +19,10 @@ public class ResultsUI : MonoBehaviour
         int finalHearts = PlayerPrefs.GetInt("FinalHearts", 0);
         int finalTime = PlayerPrefs.GetInt("FinalTime", 0);
 
-        // Los LocalizedString se resuelven en el idioma activo
-        scoreLabel.StringChanged += (value) =>
-            scoreResultText.text = value + ": " + finalScore;
+        scoreResultText.text = "Puntos: " + finalScore;
+        heartsResultText.text = "Vidas: " + finalHearts;
+        timeResultText.text = "Tiempo: " + finalTime;
 
-        heartsLabel.StringChanged += (value) =>
-            heartsResultText.text = value + ": " + finalHearts;
-
-        timeLabel.StringChanged += (value) =>
-            timeResultText.text = value + ": " + finalTime;
     }
 }
 
