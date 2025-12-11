@@ -2,8 +2,17 @@ using UnityEngine;
 
 public class DoubleRewardBrick : MonoBehaviour
 {
-    public int rewardValue = 200;   // valor base de recompensa
-    private int hitsRemaining = 2;  // necesita dos golpes
+    public int rewardValue = 200;
+    private int hitsRemaining = 2;
+
+    private void Start()
+    {
+        GameManager.Instance.BrickSpawned();
+
+        // Animación inicial
+        transform.localScale = Vector3.zero;
+        LeanTween.scale(gameObject, Vector3.one, 0.5f).setEaseOutBack();
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -13,14 +22,18 @@ public class DoubleRewardBrick : MonoBehaviour
 
             if (hitsRemaining <= 0)
             {
-                // Al romperse da el doble de recompensa
                 GameManager.Instance.AddScore(rewardValue * 2);
                 GameManager.Instance.BrickDestroyed(this);
-                Destroy(gameObject);
+
+                GameManager.Instance.PlayBrickDestroySound();
+
+                // Animación de destrucción con LeanTween
+                LeanTween.scale(gameObject, Vector3.zero, 0.3f)
+                         .setEaseInBack()
+                         .setOnComplete(() => Destroy(gameObject));
             }
             else
             {
-                // Feedback opcional: cambiar color, animación, etc.
                 GetComponent<SpriteRenderer>().color = Color.red;
             }
         }

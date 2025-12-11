@@ -2,13 +2,22 @@ using UnityEngine;
 
 public class tripleRewardBrick : MonoBehaviour
 {
-    public int rewardValue = 100;   // valor base de recompensa
-    private int hitsRemaining = 3;  // necesita tres golpes
+    public int rewardValue = 100;
+    private int hitsRemaining = 3;
     private SpriteRenderer sr;
 
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+        GameManager.Instance.BrickSpawned();
+
+        // Animación inicial
+        transform.localScale = Vector3.zero;
+        LeanTween.scale(gameObject, Vector3.one, 0.5f).setEaseOutBack();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -19,22 +28,20 @@ public class tripleRewardBrick : MonoBehaviour
 
             if (hitsRemaining <= 0)
             {
-                // Al romperse da el triple de recompensa
                 GameManager.Instance.AddScore(rewardValue * 3);
                 GameManager.Instance.BrickDestroyed(this);
-                Destroy(gameObject);
+
+                GameManager.Instance.PlayBrickDestroySound();
+
+                // Animación de destrucción con LeanTween
+                LeanTween.scale(gameObject, Vector3.zero, 0.3f)
+                         .setEaseInBack()
+                         .setOnComplete(() => Destroy(gameObject));
             }
             else
             {
-                // Cambiar color según los golpes restantes
-                if (hitsRemaining == 2)
-                {
-                    sr.color = Color.yellow; // primer golpe  amarillo
-                }
-                else if (hitsRemaining == 1)
-                {
-                    sr.color = Color.red; // segundo golpe rojo
-                }
+                if (hitsRemaining == 2) sr.color = Color.yellow;
+                else if (hitsRemaining == 1) sr.color = Color.red;
             }
         }
     }

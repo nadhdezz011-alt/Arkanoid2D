@@ -42,7 +42,11 @@ public class Ball : MonoBehaviour
 
         // Fuerza inicial hacia arriba
         rb2D.AddForce(new Vector2(0f, 8f), ForceMode2D.Impulse);
+
+        //  Sonido de lanzamiento
+        GameManager.Instance.PlayBallLaunchSound();
     }
+
 
     public void ResetBall()
     {

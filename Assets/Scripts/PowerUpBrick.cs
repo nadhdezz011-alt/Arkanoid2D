@@ -3,11 +3,20 @@ using UnityEngine;
 public class PowerUpBrick : MonoBehaviour
 {
     public GameObject powerUpPrefab;
-    public float spawnDelay = 2f; // segundos de retraso para el corazón
+    public float spawnDelay = 2f;
 
     private bool pendingSpawn = false;
     private float timer = 0f;
     private Vector3 spawnPosition;
+
+    private void Start()
+    {
+        GameManager.Instance.BrickSpawned();
+
+        // Animación inicial
+        transform.localScale = Vector3.zero;
+        LeanTween.scale(gameObject, Vector3.one, 0.5f).setEaseOutBack();
+    }
 
     private void Update()
     {
@@ -21,10 +30,15 @@ public class PowerUpBrick : MonoBehaviour
                     Instantiate(powerUpPrefab, spawnPosition, Quaternion.identity);
                 }
 
-                // Notificamos al GameManager para liberar la posición con delay
                 GameManager.Instance.BrickDestroyed(this);
 
-                gameObject.SetActive(false);
+                GameManager.Instance.PlayBrickDestroySound();
+
+                // Animación de destrucción con LeanTween
+                LeanTween.scale(gameObject, Vector3.zero, 0.3f)
+                         .setEaseInBack()
+                         .setOnComplete(() => Destroy(gameObject));
+
                 pendingSpawn = false;
             }
         }
@@ -34,10 +48,7 @@ public class PowerUpBrick : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            // Guardamos la posición antes de desactivar
             spawnPosition = transform.position;
-
-            // Activamos temporizador para instanciar el corazón
             pendingSpawn = true;
             timer = 0f;
         }
